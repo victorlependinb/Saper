@@ -1,5 +1,0 @@
-﻿  Saper.cpp
-C:\Users\victorlependinb\source\repos\Saper\Saper.cpp(129,12): warning C4244: аргумент: преобразование "time_t" в "unsigned int", возможна потеря данных
-C:\Users\victorlependinb\source\repos\Saper\Saper.cpp(67,1): warning C4715: open_cell: значение возвращается не при всех путях выполнения
-C:\Users\victorlependinb\source\repos\Saper\Saper.cpp(121,1): warning C4715: zapusk: значение возвращается не при всех путях выполнения
-  Saper.vcxproj -> C:\Users\victorlependinb\source\repos\Saper\x64\Debug\Saper.exe
