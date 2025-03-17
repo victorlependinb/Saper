@@ -2,13 +2,16 @@
 #include <string>
 #include <cmath>
 #include <algorithm>
+#include <fstream>
+#include <thread>
+#include <chrono>
 
 using namespace std;
 
 int field[100][100];
 int field_p[100][100];
 int N = 0, M = 0, K = 0;
-
+bool is_bot = false;
 void print_field() {
 	system("cls");
 	cout << "  ";
@@ -87,6 +90,7 @@ void end_game(bool  is_win = false) {
 	cout << "Вы " << (is_win ? "выиграли" : "проиграли") << "!\nЧтобы начать новую игру введите любую строку:\n";
 	string s;
 	cin >> s;
+	is_bot = false;
 }
 
 int zapusk() {
@@ -118,6 +122,25 @@ int zapusk() {
 			cout << "Такого режима нет!\n";
 		}
 	}
+}
+
+void wait(int milisec) {
+	this_thread::sleep_for(chrono::milliseconds(milisec));
+}
+void save_field() {
+	ofstream fout("field.txt", ios_base::trunc);
+	if (!fout.is_open()) {
+		cout << "Нет файла command.txt";
+		exit(0);
+	}
+	fout << N << ' ' << M << ' ' << K << '\n';
+	for (int i = 0; i < N; i++) {
+		for (int j = 0; j < M; j++) {
+			fout << field_p[i][j] << ' ';
+		}
+		fout << '\n';
+	}
+	fout.close();
 }
 
 int main() {
@@ -173,13 +196,35 @@ int main() {
 			\f x y
 			\n
 			\q
+			\b
 			*/
 			string command;
-			cin >> command;
+			ifstream fin;
+			if (is_bot == true) {
+				save_field();
+				system("bot.exe");
+				fin.open("command.txt");
+				if (!fin.is_open()) {
+					cout << "Нет файла command.txt";
+					return 0;
+				}
+				fin >> command;
+				cout << command;
+			}
+			else {
+				cin >> command;
+			}
 			if (command == "\\o") {
 				//ввод координат
 				int x, y;
-				cin >> x >> y;
+				if (is_bot) {
+					fin >> x >> y;
+					cout << ' '<< x<< ' ' << y;
+					wait(1000);
+				}
+				else {
+					cin >> x >> y;
+				}
 				--x; --y;
 				if (x < 0 || x >= N || y < 0 || y >= M || field_p[x][y] >= 0) continue;
 				//откроем клетки
@@ -195,7 +240,14 @@ int main() {
 			else if (command == "\\f") {
 				//ввод координат
 				int x, y;
-				cin >> x >> y;
+				if (is_bot) {
+					fin >> x >> y;
+					cout << ' ' << x << ' ' << y;
+					wait(1000);
+				}
+				else {
+					cin >> x >> y;
+				}
 				--x; --y;
 				if (x < 0 || x >= N || y < 0 || y >= M || field_p[x][y] >= 0) continue;
 				//ставим флаг
@@ -208,6 +260,11 @@ int main() {
 			}
 			else if (command == "\\n") {
 				//новая игра
+				break;
+			}
+			else if (command == "\\b") {
+				//новая игра ботом
+				is_bot = true;
 				break;
 			}
 			else if (command == "\\q") {
